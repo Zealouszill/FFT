@@ -35,22 +35,35 @@ class Polynomial:
 
     def __add__(self, rhs):
 
-        # lCoEff
-        # rCoEff
+        tempList = []
 
         index = 0;
 
         if len(rhs) > len(self):
             self.coefficients = self.pad(self.coefficients, len(rhs))
+        elif len(rhs) < len(self):
+            rhs.coefficients = rhs.pad(rhs.coefficients, len(self))
 
-        for x in rhs:
-            pass
+        for x in range(len(rhs)):
+            tempList = tempList + ([self.coefficients[index] + rhs.coefficients[index]])
+            index = index + 1
 
-        return Polynomial([self.coefficients[0] + rhs.coefficients[0]])
+        return Polynomial(tempList)
 
     def __mul__(self, rhs):
 
-        return Polynomial([])
+        outerLoopIndex = 0
+        innerLoopIndex = 0
+
+        tempList = []
+
+        for x in range(len(self)):
+            for y in range(len(rhs)):
+                tempList = tempList + ([self.coefficients[outerLoopIndex] * rhs.coefficients[innerLoopIndex]])
+
+
+
+        return Polynomial(tempList)
 
     def __len__(self):
 
@@ -58,6 +71,7 @@ class Polynomial:
 
 
 def test_len():
+
     p1 = Polynomial([2])
     p2 = Polynomial([3, 2])
 
@@ -66,28 +80,57 @@ def test_len():
 
 
 def test_call():
-    p1 = Polynomial([2])
 
+    p1 = Polynomial([2])
     p2 = Polynomial([3, 2])
 
     assert p1(x=5) == 2
     assert p2(x=5) == 13
 
 
-def test_add0():
+def test_mult():
+
     p1 = Polynomial([2])
-
-    print("We are printing this: ")
-    print(p1.coefficients)
-    print("End print")
-
     p2 = Polynomial([3])
+    p3 = Polynomial([5])
+    p4 = Polynomial([10])
+    p5 = Polynomial([1, 2])
+    p6 = Polynomial([5, 7])
+    p7 = Polynomial([1, 5, 8, 2, 34])
 
-    assert p1.__add__(p2).coefficients == [5]
+    assert (p1 * p2).coefficients == [6]
+    assert (p2 * p4).coefficients == [30]
 
+    assert (p1 * p5).coefficients == [2, 4]
+
+def test_add0():
+
+    p1 = Polynomial([2])
+    p2 = Polynomial([3])
+    p3 = Polynomial([5])
+    p4 = Polynomial([10])
+    p5 = Polynomial([1,2])
+    p6 = Polynomial([5,7])
+    p7 = Polynomial([1,5,8,2,34])
+
+    # Tests of lists of length one
     assert (p1 + p2).coefficients == [5]
+    assert (p1 + p2 + p3).coefficients == [10]
+    assert (p1 + p2 + p3 + p4).coefficients == [20]
 
-    assert (p1 + p2 + p3).coefficients == [5]
+    # Tests of lists of length two
+    assert (p5 + p6).coefficients == [6, 9]
+    assert (p5 + p6).coefficients == [6, 9]
+
+    # Test with differing length
+    assert (p1 + p5).coefficients == [3, 2]
+
+    # Tests with lists of different length, as well as one list
+    # being bigger than the other, then inverted.
+    assert (p2 + p6 + p7).coefficients == [9, 12, 8, 2, 34]
+    assert (p7 + p2 + p6).coefficients == [9, 12, 8, 2, 34]
+    assert (p6 + p7 + p2).coefficients == [9, 12, 8, 2, 34]
+
 
 
 if __name__ == '__main__':
@@ -95,9 +138,3 @@ if __name__ == '__main__':
     p2 = p + p
     p3 = p * p2
     value = p3(45.8)
-
-"""
-
-
-
-"""
