@@ -9,13 +9,15 @@ Created on Fri Feb  8 10:43:18 2019
 class Polynomial:
     """
 
-    Represents a polynomial in x based coefficients
+    Represents a polynomial in x based coefficients.
+    With the smallest power leading.
 
     """
 
     def __init__(self, cs):
         """
         initialize polynomial with coefficients: cs
+        cs is a list
         """
         self.coefficients = cs
 
@@ -35,40 +37,114 @@ class Polynomial:
 
     def __add__(self, rhs):
 
+        """
+        This will take two polynomial coefficients and add them together
+        and then return them.
+
+        This works if you are trying to add multiple polynomials together
+        in one line
+        """
+
+        # This will hold the new coefficient list we want to send back
         tempList = []
 
-        index = 0;
+        # This helps us iterate our for loop.
+        index = 0
 
+        # If one polynomials is longer than the other, this will equalize them with paddings of zeros
+        # on the end of the shorter polynomial
         if len(rhs) > len(self):
             self.coefficients = self.pad(self.coefficients, len(rhs))
         elif len(rhs) < len(self):
             rhs.coefficients = rhs.pad(rhs.coefficients, len(self))
 
+        # For loop to add each of the coefficients together.
         for x in range(len(rhs)):
             tempList = tempList + ([self.coefficients[index] + rhs.coefficients[index]])
             index = index + 1
 
+        # Return a polynomial with new coefficients
         return Polynomial(tempList)
 
     def __mul__(self, rhs):
 
+        """
+
+        This function will take two polynomial coefficients and then multiply them
+        together as if it were to simulate a
+
+        """
         outerLoopIndex = 0
         innerLoopIndex = 0
 
-        tempList = []
+        isNotPopped = True
+
+        tempPolynomial = Polynomial([])
+        bigPolynomial = Polynomial([])
 
         for x in range(len(self)):
             for y in range(len(rhs)):
-                tempList = tempList + ([self.coefficients[outerLoopIndex] * rhs.coefficients[innerLoopIndex]])
+
+                print("OuterLoop Index: ", outerLoopIndex)
+                print("InnerLoop Index: ", innerLoopIndex)
+
+                print("self coeff", self.coefficients)
+                print("rhs coeff", rhs.coefficients)
+
+                print("AddZero function is: ", addZero(outerLoopIndex))
+                print("tempPolynomial.coefficients: ", tempPolynomial.coefficients)
+                print("AddZero and tempPoly coeff: ", (addZero(outerLoopIndex) + tempPolynomial.coefficients))
+                print("self:", self.coefficients[outerLoopIndex])
+                print("rhs:", rhs.coefficients[innerLoopIndex])
+
+                print("self * rhs:", [self.coefficients[outerLoopIndex] * rhs.coefficients[innerLoopIndex]])
+
+                tempPolynomial.coefficients = tempPolynomial.coefficients + ([self.coefficients[outerLoopIndex] * rhs.coefficients[innerLoopIndex]])
+
+                print("tempPolynomial.coefficients: ", tempPolynomial.coefficients)
+
+                if isNotPopped:
+                    tempPolynomial.coefficients = [tempPolynomial.coefficients.pop()]
+                    isNotPopped = False
+
+                    print("if statement was called")
+
+                print("tempPolynomial.coefficients: ", tempPolynomial.coefficients)
 
 
+                print("")
+                print("")
+                print("")
+                print("")
+                innerLoopIndex = innerLoopIndex + 1
 
-        return Polynomial(tempList)
+            bigPolynomial.coefficients = (bigPolynomial + tempPolynomial).coefficients
+            print("This is big list: ", bigPolynomial.coefficients)
+
+            tempPolynomial.coefficients = addZero(outerLoopIndex)
+            outerLoopIndex = outerLoopIndex + 1
+            innerLoopIndex = 0
+
+
+        print("This is big list end: ")
+        print(bigPolynomial.coefficients)
+        print(tempPolynomial.coefficients)
+
+
+        print(bigPolynomial.coefficients)
+
+        return Polynomial(bigPolynomial.coefficients)
 
     def __len__(self):
 
         return len(self.coefficients)
 
+def addZero(numOfIterations):
+
+    if numOfIterations+1 == 1:
+        return [0]
+    elif numOfIterations+1 > 1:
+        return [0] + addZero(numOfIterations - 1)
 
 def test_len():
 
@@ -101,7 +177,11 @@ def test_mult():
     assert (p1 * p2).coefficients == [6]
     assert (p2 * p4).coefficients == [30]
 
+    assert (p5 * p6).coefficients == [5, 17, 14]
     assert (p1 * p5).coefficients == [2, 4]
+
+    assert (p1 * p2 * p3).coefficients == [30]
+    assert (p1 * p6 * p7).coefficients == [10, 64, 150, 132, 368, 476]
 
 def test_add0():
 
